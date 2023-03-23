@@ -1,0 +1,54 @@
+org: jeyventura
+app: inventory
+service: inventory-lambdas
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  environment:
+    PYTHONPATH: "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
+
+custom:
+  pythonRequirements:
+    pythonRequirementsPath:
+      hello: src/lambdas/hello/requirements.txt
+      world: src/lambdas/world/requirements.txt
+
+package:
+  individually: True
+  exclude:
+    - "**/*"
+functions:
+  hello:
+    handler: src/lambdas/hello/app.handler
+    package:
+      include:
+        - src/lambdas/hello/**
+    events:
+      - http:
+          path: hello
+          method: GET
+
+  world:
+    handler: src/lambdas/world/app.handler
+    package:
+      include:
+        - src/lambdas/world/**
+    events:
+      - http:
+          path: world
+          method: GET
+
+  vanilla:
+    handler: src/lambdas/vanilla/app.handler
+    package:
+      include:
+        - src/lambdas/vanilla/**
+    events:
+      - http:
+          path: vanilla
+          method: GET
+
+plugins:
+  - serverless-python-requirements
